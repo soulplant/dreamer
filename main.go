@@ -26,10 +26,10 @@ type Task struct {
 	ID uint `gorm:"primary_key"`
 
 	// The user who authored this Task and is working on it.
-	UserID uint
+	UserID uint `sql:"not null"`
 
 	// The category this task belongs to.
-	CategoryID uint
+	CategoryID uint `sql:"not null"`
 
 	// Human readable description of this task.
 	Description string
@@ -40,7 +40,7 @@ type Stretch struct {
 	ID uint `gorm:"primary_key"`
 
 	// The Task this Stretch belongs to.
-	TaskID uint
+	TaskID uint `sql:"not null"`
 
 	// The time this stretch began.
 	Start time.Time
@@ -75,10 +75,7 @@ func GetEntryElapsed(db *gorm.DB, taskID uint) time.Duration {
 }
 
 func OpenTestDb() *gorm.DB {
-	err := os.Remove("test.db")
-	if err != nil {
-		fmt.Println("Couldn't remove db", err)
-	}
+	os.Remove("test.db")
 	db, err := gorm.Open("sqlite3", "test.db")
 	if err != nil {
 		panic("failed to connect database")
