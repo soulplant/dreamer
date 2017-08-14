@@ -40,7 +40,7 @@ func setupTest(t *testing.T, client *Client) testVars {
 	}
 }
 
-func TestClient_CreateTask(t *testing.T) {
+func TestClient_TimerDuration(t *testing.T) {
 	db := OpenTestDb()
 	startTime := mkTime("3:00PM")
 	clock := NewFakeClock(startTime)

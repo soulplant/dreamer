@@ -13,22 +13,21 @@ func (m RealClock) Now() time.Time {
 	return time.Now()
 }
 
-type FakeClock struct {
-	t time.Time
-}
+type FakeClock time.Time
 
 func NewFakeClock(t time.Time) *FakeClock {
-	return &FakeClock{t}
+	c := FakeClock(t)
+	return &c
 }
 
 func (c FakeClock) Now() time.Time {
-	return c.t
+	return time.Time(c)
 }
 
 func (c *FakeClock) SetTime(t time.Time) {
-	c.t = t
+	*c = FakeClock(t)
 }
 
 func (c *FakeClock) Advance(d time.Duration) {
-	c.t = c.t.Add(d)
+	*c = FakeClock(time.Time(*c).Add(d))
 }
