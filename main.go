@@ -54,26 +54,6 @@ type Category struct {
 	Name string
 }
 
-// Duration returns the total duration of a frame. If Stretch.End is undefined it treats it as time.Now().
-func Duration(frame Stretch) time.Duration {
-	var t time.Time
-	if frame.End == t {
-		return time.Now().Sub(frame.Start)
-	}
-	return frame.End.Sub(frame.Start)
-}
-
-// GetEntryElapsed returns the total duration of frames of the given Task.
-func GetEntryElapsed(db *gorm.DB, taskID uint) time.Duration {
-	var frames []Stretch
-	db.Where("task_id = ?", taskID).Find(&frames)
-	var elapsed time.Duration
-	for _, frame := range frames {
-		elapsed += Duration(frame)
-	}
-	return elapsed
-}
-
 func OpenTestDb() *gorm.DB {
 	os.Remove("test.db")
 	db, err := gorm.Open("sqlite3", "test.db")
@@ -87,36 +67,7 @@ func OpenTestDb() *gorm.DB {
 
 func main() {
 	db := OpenTestDb()
-	defer db.Close()
-
-	p := Project{Name: "Dreamer"}
-	// Create
-	db.Create(&p)
-
-	t := Task{}
-	db.Create(&t)
-	fmt.Println("Created time entry", t.ID)
-
-	start := time.Now().Add(-5 * time.Minute)
-	f1 := Stretch{
-		TaskID: t.ID,
-		Start:  start,
-		End:    start.Add(time.Minute),
-	}
-	f2 := Stretch{
-		TaskID: t.ID,
-		Start:  start.Add(5 * time.Minute),
-		End:    start.Add(10 * time.Minute),
-	}
-
-	db.Create(&f1)
-	db.Create(&f2)
-
-	elapsed := GetEntryElapsed(db, t.ID)
-
-	fmt.Println("elapsed", elapsed)
-
-	// test(db)
+	test(db)
 }
 
 func test(db *gorm.DB) {
@@ -127,11 +78,8 @@ func test(db *gorm.DB) {
 	}
 	if e := db.First(&project, 1); e.Error != nil {
 		fmt.Println("Couldn't find 1")
-	}                     // find project with id 1
-	db.First(&project, "Name = ?", "Dreamer") // find project with code l1212
-
-	// Update - update project's price to 2000
-	db.Model(&project).Update("Price", 2000)
+	}
+	db.First(&project, "Name = ?", "Dreamer")
 
 	// Delete - delete project
 	// db.Delete(&project)

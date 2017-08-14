@@ -9,6 +9,10 @@ type Clock interface {
 
 type RealClock int
 
+func NewRealClock() Clock {
+	return RealClock(0)
+}
+
 func (m RealClock) Now() time.Time {
 	return time.Now()
 }

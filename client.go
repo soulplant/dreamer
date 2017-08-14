@@ -11,7 +11,7 @@ type Client struct {
 }
 
 func NewClient(db *gorm.DB, clock Clock) *Client {
-	return &Client{db, clock,}
+	return &Client{db, clock}
 }
 
 func (c *Client) Close() error {

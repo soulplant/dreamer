@@ -1,9 +1,9 @@
 package main
 
 import (
+	"log"
 	"testing"
 	"time"
-	"log"
 )
 
 func mkTime(str string) time.Time {

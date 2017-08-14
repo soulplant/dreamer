@@ -66,17 +66,17 @@ func TestClient_TimerDuration(t *testing.T) {
 		t.Error("Couldn't stop timer", err)
 	}
 
-	expectElapsed(t, client, taskID, 2 * time.Hour)
+	expectElapsed(t, client, taskID, 2*time.Hour)
 	clock.SetTime(startTime.Add(24 * time.Hour))
-	expectElapsed(t, client, taskID, 2 * time.Hour)
+	expectElapsed(t, client, taskID, 2*time.Hour)
 
 	_, err = client.StartTimer(taskID)
 	if err != nil {
 		t.Error(err)
 	}
 
-	clock.SetTime(startTime.Add(48 * time.Hour));
-	expectElapsed(t, client, taskID, 26 * time.Hour)
+	clock.SetTime(startTime.Add(48 * time.Hour))
+	expectElapsed(t, client, taskID, 26*time.Hour)
 
 	stretches, err := client.GetStretches(taskID)
 	if err != nil {
