@@ -1,6 +1,8 @@
 package main
 
-import "time"
+import (
+	"time"
+)
 
 type Project struct {
 	ID   uint `gorm:"primary_key"`
@@ -47,4 +49,3 @@ type Category struct {
 	ID   uint `gorm:"primary_key"`
 	Name string
 }
-
