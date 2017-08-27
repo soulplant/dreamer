@@ -11,6 +11,7 @@ import (
 	"github.com/graphql-go/graphql/language/ast"
 	"github.com/graphql-go/handler"
 	"github.com/jinzhu/gorm"
+	"google.golang.org/grpc/reflection"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/soulplant/dreamer/api"
@@ -20,7 +21,7 @@ import (
 )
 
 const port = ":1234"
-const grpcPort = ":1235"
+const grpcPort = "127.0.0.1:1235"
 
 //go:generate ./gen-protos.sh
 
@@ -125,7 +126,7 @@ func main() {
 	rJSON, _ := json.Marshal(r)
 	fmt.Printf("%s \n", rJSON)
 
-	h := handler.New(&handler.Config{
+	gqlHandler := handler.New(&handler.Config{
 		Schema: &schema,
 		Pretty: true,
 	})
@@ -135,7 +136,7 @@ func main() {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 	api.RegisterLoginServiceHandlerFromEndpoint(ctx, apiMux, grpcPort, []grpc.DialOption{grpc.WithInsecure()})
-	http.Handle("/graphql", h)
+	http.Handle("/graphql", gqlHandler)
 	http.Handle("/api/", http.StripPrefix("/api", apiMux))
 	http.HandleFunc("/files/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Access-Control-Allow-Origin", "*")
@@ -147,10 +148,12 @@ func main() {
 			log.Fatal("Failed to listen", err)
 		}
 		rpcServer := grpc.NewServer()
+		reflection.Register(rpcServer)
 		api.RegisterLoginServiceServer(rpcServer, &loginService{})
+		fmt.Printf("Listening for gRPC on %s\n", grpcPort)
 		log.Fatal(rpcServer.Serve(lis))
 	}()
-	fmt.Printf("Listening on %s\n", port)
+	fmt.Printf("Listening for HTTP on %s\n", port)
 	err = http.ListenAndServe(port, nil)
 	if err != nil {
 		fmt.Println("Failed to listen", err)
