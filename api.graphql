@@ -1,0 +1,57 @@
+type Query {
+  // Info about the current user.
+  user: User!
+
+  // Return the list of projects the current user has.
+  projects: [Project]!
+
+  // Retrieve the timers for a given date.
+  timers(date: Date!): [Timer]!
+
+  // Retrieve the timers started on dates in the range [from, to].
+  report(from: Date!, to: Date!): [Timer]!
+
+  login(user: String!, password: String!): Login!
+}
+
+type Mutation {
+  // Restart an existing timer.
+  startTimer(id: ID!): Timer!
+
+  // Stops a timer that is currently running.
+  stopTimer(id: ID!): Timer!
+
+  // Create and start a Timer.
+  createAndStartTimer(project: ID!, category: ID!, desc: String): Timer!
+}
+
+type Login {
+  token: String!
+}
+
+type User {
+  username: String!
+  firstName: String!
+  lastName: String!
+  email: String!
+}
+
+type Project {
+  id: ID!
+  categories: [Category]!
+}
+
+type Category {
+  id: ID!
+  name: String!
+}
+
+type Timer {
+  id: ID!
+  start_date: Date!
+  start_time: DateTime!
+  duration_seconds: Int!
+  name: String!
+  project: ID!
+  category: ID!
+}
