@@ -15,3 +15,12 @@ Note: we are relying on grpc-gateway@master (see Gopkg.toml) to simplify setup. 
 - `dep ensure`
 - `go build`
 - Note that protos are generated with `go generate`
+
+# Ideal dev flow
+- have a docker container that has access to the checked out source, building and restarting it when it detects changes.
+  - what about running the server from gogland?
+  - what about debugging the running server?
+- pushing to master cuts a new release (using a minimal image image that has nothing but the binary)
+  - jenkins
+- pushing to review branch starts a demo instance
+  - not that important
