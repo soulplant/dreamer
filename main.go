@@ -1,13 +1,11 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 
-	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/handler"
 	"github.com/jinzhu/gorm"
 	"google.golang.org/grpc/reflection"
@@ -25,27 +23,6 @@ const grpcPort = "127.0.0.1:1235"
 //go:generate ./gen-protos.sh
 
 func main() {
-	// Query
-	query := `
-		{
-			hello
-			bar
-			obj {
-				name
-				subobj {
-					foo
-				}
-			}
-		}
-	`
-	params := graphql.Params{Schema: schema, RequestString: query}
-	r := graphql.Do(params)
-	if len(r.Errors) > 0 {
-		log.Fatalf("failed to execute graphql operation, errors: %+v", r.Errors)
-	}
-	rJSON, _ := json.Marshal(r)
-	fmt.Printf("%s \n", rJSON)
-
 	gqlHandler := handler.New(&handler.Config{
 		Schema: &schema,
 		Pretty: true,
