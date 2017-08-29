@@ -12,6 +12,12 @@ func TestGql(t *testing.T) {
 		expectedData string
 	}{
 		{"{hello}", `{"hello":"world"}`},
+		{`{
+			login(user: "james", password: "abc123") {
+				token
+			}
+		`, `{"login":{"token":"fake-token"}}`,
+		},
 		{"{}", `null`},
 		{
 			query: `{ hello bar obj { name subobj { foo } } }`,
@@ -26,7 +32,6 @@ func TestGql(t *testing.T) {
 		if err != nil {
 			t.Fatal("request failed", err)
 		}
-		t.Log("output", string(rJSON))
 		if string(rJSON) != c.expectedData {
 			t.Fatalf("expected '%s', got '%s'\n", c.expectedData, string(rJSON))
 		}

@@ -12,6 +12,17 @@ import (
 var schema graphql.Schema = makeSchema()
 
 func makeSchema() graphql.Schema {
+	login := graphql.NewObject(graphql.ObjectConfig{
+		Name: "Login",
+		Fields: graphql.Fields{
+			"token": &graphql.Field{
+				Type: graphql.String,
+				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+					return "fake-token", nil
+				},
+			},
+		},
+	})
 	subObj := graphql.NewObject(graphql.ObjectConfig{
 		Name: "subobj",
 		Fields: graphql.Fields{
@@ -48,6 +59,8 @@ func makeSchema() graphql.Schema {
 	})
 	// Schema
 	fields := graphql.Fields{
+		"login": &graphql.Field{
+		},
 		"obj": &graphql.Field{
 			Type: obj,
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
