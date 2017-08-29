@@ -11,6 +11,10 @@ import (
 
 var schema graphql.Schema = makeSchema()
 
+type loginResponse struct {
+	Token string
+}
+
 func makeSchema() graphql.Schema {
 	login := graphql.NewObject(graphql.ObjectConfig{
 		Name: "Login",
@@ -59,8 +63,6 @@ func makeSchema() graphql.Schema {
 	})
 	// Schema
 	fields := graphql.Fields{
-		"login": &graphql.Field{
-		},
 		"obj": &graphql.Field{
 			Type: obj,
 			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
@@ -97,8 +99,29 @@ func makeSchema() graphql.Schema {
 			},
 		},
 	}
+	mutationFields := graphql.Fields{
+		"login": &graphql.Field{
+			Type: login,
+			Args: graphql.FieldConfigArgument{
+				"user": &graphql.ArgumentConfig{
+					Type: graphql.String,
+				},
+				"password": &graphql.ArgumentConfig{
+					Type: graphql.String,
+				},
+			},
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				fmt.Printf("args: %v\n", p.Args)
+				return &loginResponse{"fake-token"}, nil
+			},
+		},
+	}
 	rootQuery := graphql.ObjectConfig{Name: "RootQuery", Fields: fields}
-	schemaConfig := graphql.SchemaConfig{Query: graphql.NewObject(rootQuery)}
+	rootMutation := graphql.ObjectConfig{Name: "RootMutation", Fields: mutationFields}
+	schemaConfig := graphql.SchemaConfig{
+		Query: graphql.NewObject(rootQuery),
+		Mutation: graphql.NewObject(rootMutation),
+	}
 	schema, err := graphql.NewSchema(schemaConfig)
 	if err != nil {
 		log.Fatalf("failed to create new schema, error: %v", err)
